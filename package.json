@@ -1,0 +1,19 @@
+{
+  "name": "mavatar",
+  "version": "1.0.0",
+  "description": "mobile avatar upload",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/Hzy0913/Mavatar.git"
+  },
+  "author": "hzy0913",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Hzy0913/Mavatar/issues"
+  },
+  "homepage": "https://github.com/Hzy0913/Mavatar#readme"
+}
