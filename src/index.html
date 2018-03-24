@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1">
+  <title>mavatar.js</title>
+  <script src="lib/mavatar.js"></script>
+  <style>
+    .button {
+      outline: 0;
+      display: inline-block;
+      margin-bottom: 0;
+      font-weight: 400;
+      text-align: center;
+      vertical-align: middle;
+      -ms-touch-action: manipulation;
+      touch-action: manipulation;
+      cursor: pointer;
+      background-image: none;
+      border: 1px solid transparent;
+      white-space: nowrap;
+      line-height: 1.5;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+      padding: 6px 15px;
+      font-size: 12px;
+      border-radius: 4px;
+      transition: color .2s linear,background-color .2s linear,border .2s linear,box-shadow .2s linear;
+      color: #495060;
+      background-color: #f7f7f7;
+      border-color: #dddee1;
+    }
+    .button-info {
+      color: #fff;
+      background-color: #2db7f5;
+      border-color: #2db7f5;
+    }
+    .avatarbox {width: 200px; margin: 0 auto}
+    #avatar{width: 200px;}
+    .botton-box{width: 140px; margin: 0 auto; margin-top: 20px}
+  </style>
+</head>
+
+<body style="background-color: #fafafa">
+<div class="avatarbox" >
+  <div id="avatar"></div>
+  <div class="botton-box">
+    <button onclick="clip()" class="button button-info" style="float: left">裁剪</button>
+    <button onclick="reset()" class="button" style="float: right">重置</button>
+  </div>
+</div>
+
+
+
+<script>
+  var avatar = new Mavatar({el: '#avatar',backgroundColor: '#fff'});
+  function clip() {
+    avatar.imageClipper(function (data) {
+      alert('裁剪成功，生成的图片已覆盖在上传框内');
+      console.log(data);
+    })
+  }
+  function reset() {
+    avatar.resetImage();
+  }
+  //获取上传前信息
+  function getInfo() {
+    var fileInfo = avatar.getfileInfo();
+    console.log(fileInfo);
+  }
+  //获取base64
+  function getdata() {
+    var urldata = avatar.getDataUrl();
+    console.log(urldata);
+  }
+</script>
+</body>
+</html>
+
