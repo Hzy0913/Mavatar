@@ -5,7 +5,9 @@
 
 ### 在线预览 ###
 [在线预览地址](http://binlive.cn/mavatar "预览地址")
-二维码预览![](![](http://img.binlive.cn/upload/1521910380734))
+
+二维码预览
+[![qrcode](http://img.binlive.cn/upload/1521910380734 "qrcode")](http://img.binlive.cn/upload/1521910380734 "qrcode")
 ### 使用 ###
 安装
 
