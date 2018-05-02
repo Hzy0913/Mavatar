@@ -4,10 +4,10 @@
 
 
 ### 在线预览 ###
-[在线预览地址](http://binlive.cn/mavatar "预览地址")
+[在线预览地址](http://admin.binlive.cn/mavatar "在线预览地址")
 
-二维码预览
-[![qrcode](http://img.binlive.cn/upload/1521910380734 "qrcode")](http://img.binlive.cn/upload/1521910380734 "qrcode")
+###### 二维码预览
+![binlive前端开发,web开发,node,vue,react,webpack](http://img.binlive.cn/upload/1525271432704qrcode.png)
 ### 使用 ###
 安装
 
