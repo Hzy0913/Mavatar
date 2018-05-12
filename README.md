@@ -16,7 +16,7 @@
 
     import Mavatar from 'mavatar'
 
-创建html标签并赋值id,在dom完成装在的周期里，如 `react`的(componentDidMount), `vue`的(mounted)中进行实例化。
+创建html标签并赋值id,在dom完成装载的周期里，如 `react`的(componentDidMount), `vue`的(mounted)中进行实例化。
 
     componentDidMount() {
 		window.avatar = new Mavatar({
