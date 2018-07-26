@@ -25,6 +25,7 @@
     this.imgWidth = null;
     this.imgHeight = null;
     this.orientation;
+    this.fileOnchange = option.fileOnchange || null;
     this._init();
   };
   Mavatar.prototype = {
@@ -49,6 +50,7 @@
 
       uploadImagesInput.type = 'file';
       uploadImagesInput.id = 'Mavatar-file';
+      uploadImagesInput.accept = 'image/*';
       uploadImagesInput.style.width = width;
       uploadImagesInput.style.height = height;
       uploadImagesInput.style.position = 'absolute';
@@ -123,8 +125,8 @@
           'rotate3d('+ self.transform.rx +','+ self.transform.ry +','+ self.transform.rz +','+  self.transform.angle + 'deg)'
         ];
         value = value.join(" ");
-        dragEl.style.webkitTransform = value;
-        dragEl.style.mozTransform = value;
+        dragEl.style.WebkitTransform = value;
+        dragEl.style.MozTransform = value;
         dragEl.style.transform = value;
         ticking = false;
       };
@@ -227,6 +229,7 @@
       var newUploadImagesInput = document.createElement("input");
       var oldUploadImagesInput = document.getElementById('Mavatar-file');
       newUploadImagesInput.type = 'file';
+      newUploadImagesInput.accept = 'image/*';
       newUploadImagesInput.id = 'Mavatar-file';
       newUploadImagesInput.style.width = this.width;
       newUploadImagesInput.style.height = this.height;
@@ -241,7 +244,56 @@
       document.getElementById('Mavatar-img').src = '';
       document.getElementById('Mavatar-canvasWrapper').style.display = 'none';
     },
+    formData: function() {
+      var timestamp = Date.parse(new Date());
+      var dataURLtoFile = (dataurl, filename) => {
+        const arr = dataurl.split(',');
+        const mime = arr[0].match(/:(.*?);/)[1];
+        const bstr = atob(arr[1]);
+        let n = bstr.length;
+        const u8arr = new Uint8Array(n);
+        while (n--) {
+          u8arr[n] = bstr.charCodeAt(n);
+        }
+        return new File([u8arr], filename, {type: mime});
+      };
+      const file = dataURLtoFile(this.dataUrl, `${timestamp}.png`);
+      const formData = new FormData();
+      formData.append('headImage', file, `${timestamp}.png`);
+
+
+      var xhr = null;
+      if(window.XMLHttpRequest){
+        xhr = new XMLHttpRequest();
+      } else {
+        xhr = new ActiveXObject('Microsoft.XMLHTTP')
+      }
+
+      var type = type.toUpperCase();
+      // 用于清除缓存
+      var random = Math.random();
+
+      xhr.open('POST', url, true);
+      // 如果需要像 html 表单那样 POST 数据，请使用 setRequestHeader() 来添加 http 头。
+      xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+      xhr.send(data);
+
+      // 处理返回数据
+      xhr.onreadystatechange = function(){
+        if(xhr.readyState == 4){
+          if(xhr.status == 200 && success){
+            success(xhr.responseText);
+          } else if(failed){
+            failed(xhr.status);
+          }
+        }
+      }
+
+
+
+    },
     uploadImages: function(files) {
+      this.fileOnchange && this.fileOnchange(files);
       var self = this;
       var _files = files || event.target.files;
       var _index = 0;
@@ -251,6 +303,8 @@
       reader.onload = function(event) {
         var image = new Image();
         image.src = this.result;
+        image.style.opacity = 0;
+        image.style.width = '96%';
         document.body.appendChild(image);
         image.onload = function() {
           self.imgWidth = image.offsetWidth;

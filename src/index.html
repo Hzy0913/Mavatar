@@ -55,7 +55,9 @@
 
 
 <script>
-  var avatar = new Mavatar({el: '#avatar',backgroundColor: '#fff'});
+  var avatar = new Mavatar({el: '#avatar',backgroundColor: '#fff', fileOnchange: function (e) {
+      console.log(e)
+    }});
   function clip() {
     avatar.imageClipper(function (data) {
       alert('裁剪成功，生成的图片已覆盖在上传框内');
