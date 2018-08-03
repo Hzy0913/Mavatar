@@ -16,7 +16,7 @@
 
     import Mavatar from 'mavatar'
 
-创建html的dom标签并定义id名,在dom加载完成的周期里，如 `react`的(componentDidMount), `vue`的(mounted)中进行实例化。也可以在纯js中使用，引入[mavatar.js](http://admin.binlive.cn/lib/mavatar.js "mavatar.js")即可。
+创建html的dom标签并定义id名,在dom加载完成的周期里，如 `react`的(componentDidMount), `vue`的(mounted)中进行实例化。也可以在纯js中使用，引入[mavatar.js](https://github.com/Hzy0913/Mavatar/blob/master/src/lib/mavatar.js "mavatar.js")即可。
 
 #### React中使用示例
 ```javascript
