@@ -82,13 +82,13 @@ export default class App extends Component {
 		  avatar.upload({
 			url: 'http://localhost:3080/profile',
 			name: 'avatar',
-			data: {userName: 'hzy0913', info: 'someInfo'}
+			data: {userName: 'hzy0913', info: 'someInfo'},
 			success: function (data) {
 			 console.log(data)
 			},
 			error: function (error) {
 			 console.log(error)
-			},
+			}
 		  });
 	    })
 	  }
@@ -127,13 +127,13 @@ avatar.resetImage()
 avatar.upload({
 	url: 'http://localhost:3080/profile',
 	name: 'avatar',
-	data: {userName: 'hzy0913', info: 'someInfo'}
+	data: {userName: 'hzy0913', info: 'someInfo'},
 	success: function (data) {
 	 console.log(data)
 	},
 	error: function (error) {
 	 console.log(error)
-	},
+	}
 });
 ```
 |参数   |类型   |描述   |
