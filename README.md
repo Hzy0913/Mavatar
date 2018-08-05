@@ -1,6 +1,6 @@
 #### Mavatar ####
 
-移动端头像上传，支撑头像预览和放大缩小平移。
+移动端头像上传，支撑头像预览和放大缩小平移，内置上传至后端请求方法。
 
 
 ### 在线预览 ###
@@ -78,6 +78,18 @@ export default class App extends Component {
 	    avatar.imageClipper(function (data) {
 	      alert('裁剪成功，生成的图片已覆盖在上传框内');
 	      console.log(data);
+	      //  将图片上传至后台
+		  avatar.upload({
+			url: 'http://localhost:3080/profile',
+			name: 'avatar',
+			data: {userName: 'hzy0913', info: 'someInfo'}
+			success: function (data) {
+			 console.log(data)
+			},
+			error: function (error) {
+			 console.log(error)
+			},
+		  });
 	    })
 	  }
 	  function reset() {
@@ -110,10 +122,32 @@ avatar.resetImage()
 ```javascript
  const dataUrl = avatar.getDataUrl()
 ```
+图片上传至服务器的内置ajax方法(使用`multipart/form-data`类型模拟form格式进行上传)
+```javascript
+avatar.upload({
+	url: 'http://localhost:3080/profile',
+	name: 'avatar',
+	data: {userName: 'hzy0913', info: 'someInfo'}
+	success: function (data) {
+	 console.log(data)
+	},
+	error: function (error) {
+	 console.log(error)
+	},
+});
+```
+|参数   |类型   |描述   |
+| ------------ | ------------ | ------------ |
+| url  | string  | 必传，上传的请求地址  |
+| name  | string  | 必传，图片上传的请求name  |
+| data  | object  | 发送到服务器的其他数据，选填  |
+| success  | function  | 上传成功的回调，选填  |
+| error  | function  | 上传失败的回调，选填  |
+
 ### 参数
 
-实例化时传入的配置参数option
-` avatar = new Mavatar({option})`
+实例化时传入的配置参数option对象
+` avatar = new Mavatar(option)`
 
 |参数   |值   |描述   |
 | ------------ | ------------ | ------------ |
@@ -122,3 +156,4 @@ avatar.resetImage()
 | height  |(string)默认200px   | 不传则默认为生成200px高的头像上传域  |
 |  backgroundColor | (string)默认为空  | 不传则裁剪时空的区域为透明  |
 |  hd |  (boolean)默认为true  |  默认为生成两倍大小图片，解决高清屏中图片生成不清晰 |
+|  fileOnchange | (function)  | 图片本地上传到input后的回调方法 |
