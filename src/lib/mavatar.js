@@ -178,8 +178,8 @@
         scale:scaleBy,
       }).then(function(canvas) {
         var dataUrl = canvas.toDataURL("image/png");
-        typeof getDataUrl === 'function' ? getDataUrl(dataUrl) : null
         self.dataUrl = dataUrl;
+        typeof getDataUrl === 'function' ? getDataUrl(dataUrl) : null
         var MavatarRender = document.getElementById('Mavatar-render');
         MavatarRender.style.display = 'block';
         MavatarRender.src = dataUrl;
@@ -244,23 +244,29 @@
       document.getElementById('Mavatar-img').src = '';
       document.getElementById('Mavatar-canvasWrapper').style.display = 'none';
     },
-    formData: function() {
-      var timestamp = Date.parse(new Date());
-      var dataURLtoFile = (dataurl, filename) => {
-        const arr = dataurl.split(',');
-        const mime = arr[0].match(/:(.*?);/)[1];
-        const bstr = atob(arr[1]);
-        let n = bstr.length;
-        const u8arr = new Uint8Array(n);
+    upload: function(option) {
+      var option = option || {};
+      var url = option.url;
+      var name = option.name;
+      var imgName = (this.file || {}).name || Date.parse(new Date());
+      var success = option.success || null;
+      var error = option.error || null;
+
+      var dataURLtoFile = function(dataurl, filename) {
+        var arr = dataurl.split(',');
+        var mime = arr[0].match(/:(.*?);/)[1];
+        var bstr = atob(arr[1]);
+        var n = bstr.length;
+        var u8arr = new Uint8Array(n);
         while (n--) {
           u8arr[n] = bstr.charCodeAt(n);
         }
         return new File([u8arr], filename, {type: mime});
       };
-      const file = dataURLtoFile(this.dataUrl, `${timestamp}.png`);
-      const formData = new FormData();
-      formData.append('headImage', file, `${timestamp}.png`);
 
+      var file = dataURLtoFile(this.dataUrl, imgName);
+      var formData = new FormData();
+      formData.append(name, file, imgName);
 
       var xhr = null;
       if(window.XMLHttpRequest){
@@ -268,29 +274,17 @@
       } else {
         xhr = new ActiveXObject('Microsoft.XMLHTTP')
       }
-
-      var type = type.toUpperCase();
-      // 用于清除缓存
-      var random = Math.random();
-
       xhr.open('POST', url, true);
-      // 如果需要像 html 表单那样 POST 数据，请使用 setRequestHeader() 来添加 http 头。
-      xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-      xhr.send(data);
-
-      // 处理返回数据
+      xhr.send(formData);
       xhr.onreadystatechange = function(){
         if(xhr.readyState == 4){
           if(xhr.status == 200 && success){
             success(xhr.responseText);
-          } else if(failed){
-            failed(xhr.status);
+          } else if(error){
+            error(xhr);
           }
         }
-      }
-
-
-
+      };
     },
     uploadImages: function(files) {
       this.fileOnchange && this.fileOnchange(files);
