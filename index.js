@@ -15,6 +15,7 @@ var EXIF = require('exif-js');
     this.imgWidth = null;
     this.imgHeight = null;
     this.orientation;
+    this.fileOnchange = option.fileOnchange || null;
     this._init();
   };
   Mavatar.prototype = {
@@ -39,6 +40,7 @@ var EXIF = require('exif-js');
 
       uploadImagesInput.type = 'file';
       uploadImagesInput.id = 'Mavatar-file';
+      uploadImagesInput.accept = 'image/*';
       uploadImagesInput.style.width = width;
       uploadImagesInput.style.height = height;
       uploadImagesInput.style.position = 'absolute';
@@ -113,8 +115,8 @@ var EXIF = require('exif-js');
           'rotate3d('+ self.transform.rx +','+ self.transform.ry +','+ self.transform.rz +','+  self.transform.angle + 'deg)'
         ];
         value = value.join(" ");
-        dragEl.style.webkitTransform = value;
-        dragEl.style.mozTransform = value;
+        dragEl.style.WebkitTransform = value;
+        dragEl.style.MozTransform = value;
         dragEl.style.transform = value;
         ticking = false;
       };
@@ -166,8 +168,8 @@ var EXIF = require('exif-js');
         scale:scaleBy,
       }).then(function(canvas) {
         var dataUrl = canvas.toDataURL("image/png");
-        typeof getDataUrl === 'function' ? getDataUrl(dataUrl) : null
         self.dataUrl = dataUrl;
+        typeof getDataUrl === 'function' ? getDataUrl(dataUrl) : null
         var MavatarRender = document.getElementById('Mavatar-render');
         MavatarRender.style.display = 'block';
         MavatarRender.src = dataUrl;
@@ -217,6 +219,7 @@ var EXIF = require('exif-js');
       var newUploadImagesInput = document.createElement("input");
       var oldUploadImagesInput = document.getElementById('Mavatar-file');
       newUploadImagesInput.type = 'file';
+      newUploadImagesInput.accept = 'image/*';
       newUploadImagesInput.id = 'Mavatar-file';
       newUploadImagesInput.style.width = this.width;
       newUploadImagesInput.style.height = this.height;
@@ -231,7 +234,56 @@ var EXIF = require('exif-js');
       document.getElementById('Mavatar-img').src = '';
       document.getElementById('Mavatar-canvasWrapper').style.display = 'none';
     },
+    upload: function(option) {
+      var option = option || {};
+      var url = option.url;
+      var name = option.name;
+      var imgName = (this.file || {}).name || Date.parse(new Date());
+      var success = option.success || null;
+      var error = option.error || null;
+      var data = option.data || null;
+
+      var dataURLtoFile = function(dataurl, filename) {
+        var arr = dataurl.split(',');
+        var mime = arr[0].match(/:(.*?);/)[1];
+        var bstr = atob(arr[1]);
+        var n = bstr.length;
+        var u8arr = new Uint8Array(n);
+        while (n--) {
+          u8arr[n] = bstr.charCodeAt(n);
+        }
+        return new File([u8arr], filename, {type: mime});
+      };
+
+      var file = dataURLtoFile(this.dataUrl, imgName);
+      var formData = new FormData();
+      formData.append(name, file, imgName);
+      if (data) {
+        for (name in data) {
+          formData.append(name, data[name]);
+        }
+      }
+
+      var xhr = null;
+      if(window.XMLHttpRequest){
+        xhr = new XMLHttpRequest();
+      } else {
+        xhr = new ActiveXObject('Microsoft.XMLHTTP')
+      }
+      xhr.open('POST', url, true);
+      xhr.send(formData);
+      xhr.onreadystatechange = function(){
+        if(xhr.readyState == 4){
+          if(xhr.status == 200 && success){
+            success(xhr.responseText);
+          } else if(error){
+            error(xhr);
+          }
+        }
+      };
+    },
     uploadImages: function(files) {
+      this.fileOnchange && this.fileOnchange(files);
       var self = this;
       var _files = files || event.target.files;
       var _index = 0;
@@ -241,6 +293,8 @@ var EXIF = require('exif-js');
       reader.onload = function(event) {
         var image = new Image();
         image.src = this.result;
+        image.style.opacity = 0;
+        image.style.width = '96%';
         document.body.appendChild(image);
         image.onload = function() {
           self.imgWidth = image.offsetWidth;
