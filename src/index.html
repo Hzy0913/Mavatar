@@ -60,8 +60,9 @@
     }});
   function clip() {
     avatar.imageClipper(function (data) {
-      alert('裁剪成功，生成的图片已覆盖在上传框内');
-      console.log(data);
+      avatar.upload({url: 'http://www.baidu.com', name: 'file'});
+      // alert('裁剪成功，生成的图片已覆盖在上传框内');
+      // console.log(data);
     })
   }
   function reset() {
