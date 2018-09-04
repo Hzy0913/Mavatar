@@ -227,7 +227,7 @@ var EXIF = require('exif-js');
       newUploadImagesInput.style.left = 0;
       newUploadImagesInput.style.top = 0;
       newUploadImagesInput.style.opacity = 0;
-      document.getElementById('Mavatar-wrapper').replaceChild(newUploadImagesInput,oldUploadImagesInput);
+      document.getElementById('Mavatar-wrapper').replaceChild(newUploadImagesInput, oldUploadImagesInput);
       document.getElementById('Mavatar-file').addEventListener("change", function (files) {
         self.uploadImages(files)
       }, false);
@@ -287,75 +287,81 @@ var EXIF = require('exif-js');
       var self = this;
       var _files = files || event.target.files;
       var _index = 0;
+      var Orientation;
       var reader = new FileReader();
       this.file = files.target.files[_index];
+      EXIF.getData(files.target.files[_index], function () {
+        EXIF.getAllTags(this);
+        Orientation = EXIF.getTag(this, 'Orientation');
+      });
       reader.readAsDataURL(files.target.files[_index]);
       reader.onload = function(event) {
         var image = new Image();
-        image.src = this.result;
-        image.style.opacity = 0;
-        image.style.width = '96%';
-        document.body.appendChild(image);
+        image.src = event.target.result;
         image.onload = function() {
           self.imgWidth = image.offsetWidth;
           self.imgHeight = image.offsetHeight;
-          EXIF.getData(image, function() {
-            EXIF.getAllTags(this);
-            var orientation = EXIF.getTag(this, "Orientation");
-            var rotateCanvas = document.createElement("canvas"),
-              rotateCtx = rotateCanvas.getContext("2d");
-            switch (orientation) {
-              case 1 :
-                rotateCanvas.width = image.offsetWidth;
-                rotateCanvas.height = image.offsetHeight;
-                rotateCtx.drawImage(image, 0, 0, image.offsetWidth, image.offsetHeight);
-                break;
-              case 6 : // 顺时针 90 度
-                rotateCanvas.width = image.offsetHeight;
-                rotateCanvas.height = image.offsetWidth;
-                rotateCtx.translate(0, 0);
-                rotateCtx.rotate(90 * Math.PI / 180);
-                rotateCtx.drawImage(image, 0, -image.offsetHeight, image.offsetWidth, image.offsetHeight);
-                break;
-              case 8 :
-                rotateCanvas.width = image.height;
-                rotateCanvas.height = image.width;
-                rotateCtx.translate(0, 0);
-                rotateCtx.rotate(-90 * Math.PI / 180);
-                rotateCtx.drawImage(image, -image.width, 0, image.width, image.height);
-                break;
-              case 3 : // 180 度
-                rotateCanvas.width = image.width;
-                rotateCanvas.height = image.height;
-                rotateCtx.translate(0, 0);
-                rotateCtx.rotate(Math.PI);
-                rotateCtx.drawImage(image, -image.width, -image.height, image.width, image.height);
-                break;
-              default :
-                rotateCanvas.width = image.width;
-                rotateCanvas.height = image.height;
-                rotateCtx.drawImage(image, 0, 0, image.width, image.height);
-            }
-            var rotateBase64 = rotateCanvas.toDataURL("image/png", 0.5);
-            document.getElementById('Mavatar-img').src = rotateBase64;
-            if (image.offsetHeight > image.offsetWidth) {
-              var width = self.height.replace(/[^0-9]/ig,"");
-              document.getElementById('Mavatar-img').style.height = self.height;
-              document.getElementById('Mavatar-img').style.width = 'auto';
-              var translatex = (width - (image.offsetWidth/(image.offsetHeight/width)))/2;
-              self.START_X = translatex;
-              document.getElementById('Mavatar-img').style.transform = 'translate('+translatex+'px,0px)';
-            } else {
-              var height = self.height.replace(/[^0-9]/ig,"");
-              var translatey = (height-(image.offsetHeight/(image.offsetWidth/height)))/2;
-              document.getElementById('Mavatar-img').style.width = self.width;
-              document.getElementById('Mavatar-img').style.height = 'auto';
-              document.getElementById('Mavatar-img').style.transform = 'translate(0px,'+translatey+'px)';
-              self.START_Y = translatey;
-            }
-            document.body.removeChild(image);
-            document.getElementById('Mavatar-canvasWrapper').style.display = 'block';
-          });
+          var canvas = document.createElement("canvas");
+          var ctx = canvas.getContext("2d");
+          var rotateBase64;
+          var isRotate;
+          var width = this.naturalWidth;
+          var height = this.naturalHeight;
+          switch (Orientation) {
+            case 1 :
+              canvas.width = width;
+              canvas.height = height;
+              ctx.drawImage(this, 0, 0, width, height);
+              isRotate = true;
+              break;
+            case 6:
+              canvas.width = height;
+              canvas.height = width;
+              ctx.rotate(90 * Math.PI / 180);
+              ctx.drawImage(this, 0, -height);
+              isRotate = true;
+              break;
+            case 8:
+              canvas.width = height;
+              canvas.height = width;
+              ctx.rotate(-90 * Math.PI / 180);
+              ctx.drawImage(this, -width, 0);
+              isRotate = true;
+              break;
+            case 3:
+              ctx.rotate(180 * Math.PI / 180);
+              ctx.drawImage(this, -width, -height);
+              isRotate = true;
+              break;
+            default:
+              rotateBase64 = event.target.result;
+          }
+          if (isRotate) {
+            rotateBase64 = canvas.toDataURL("image/png", 1);
+          }
+          document.getElementById('Mavatar-img').src = rotateBase64;
+          var wrapperWidth = self.width.replace(/[^0-9]/ig,"");
+          var wrapperHeight = self.height.replace(/[^0-9]/ig,"");
+          var isRotate6 = Orientation === 6;
+          if (height > width) {
+            document.getElementById('Mavatar-img').style.height = self.height;
+            document.getElementById('Mavatar-img').style.width = 'auto';
+            var translatex = (wrapperWidth - (width/(height/wrapperHeight)))/2;
+            self.START_X = translatex;
+            document.getElementById('Mavatar-img').style.transform = 'translate('+translatex+'px,0px)';
+          } else {
+            document.getElementById('Mavatar-img').style.width = self.width;
+            document.getElementById('Mavatar-img').style.height = 'auto';
+            var translatey = (wrapperHeight-(height/(width/wrapperWidth)))/2;
+            self.START_Y = translatey;
+            document.getElementById('Mavatar-img').style.transform = 'translate(0px,'+translatey+'px)';
+          }
+          if (isRotate6) {
+            self.START_Y = 0;
+            document.getElementById('Mavatar-img').style.transform = 'translate(0px, 0px)';
+          }
+          document.getElementById('Mavatar-canvasWrapper').style.display = 'block';
+          document.getElementById('Mavatar-file').style.display = 'none';
         }
       }
     }
