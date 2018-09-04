@@ -1,6 +1,6 @@
 {
   "name": "mavatar",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "mobile avatar upload",
   "main": "index.js",
   "scripts": {
