@@ -58,45 +58,44 @@ export default class App extends Component {
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
-	<title>Mavatar</title>
-  	<script src="lib/mavatar.js"></script>
+  <meta charset="UTF-8">
+  <title>Mavatar</title>
+  <script src="lib/mavatar.js"></script>
 </head>
-<body>
-<body>
-	<!-- dom -->
-	<div class="avatarbox" >
-	  <div id="avatar"></div>
-	  <button onclick="clip()">裁剪</button>
-	  <button onclick="reset()">重置</button>
-	</div>
+  <body>
+    <!-- dom -->
+    <div class="avatarbox" >
+      <div id="avatar"></div>
+      <button onclick="clip()">裁剪</button>
+      <button onclick="reset()">重置</button>
+    </div>
 
-	<!-- script -->
-	<script>
-	  var avatar = new Mavatar({el: '#avatar',backgroundColor: '#fff'});
-	  function clip() {
-	    avatar.imageClipper(function (data) {
-	      alert('裁剪成功，生成的图片已覆盖在上传框内');
-	      console.log(data);
-	      //  将图片上传至后台
-		  avatar.upload({
-			url: 'http://localhost:3080/profile',
-			name: 'avatar',
-			data: {userName: 'hzy0913', info: 'someInfo'},
-			success: function (data) {
-			 console.log(data)
-			},
-			error: function (error) {
-			 console.log(error)
-			}
-		  });
-	    })
-	  }
-	  function reset() {
-	    avatar.resetImage();
-	  }
-	</script>
-</body>
+    <!-- script -->
+    <script>
+      var avatar = new Mavatar({el: '#avatar',backgroundColor: '#fff'});
+      function clip() {
+        avatar.imageClipper(function (data) {
+          alert('裁剪成功，生成的图片已覆盖在上传框内');
+          console.log(data);
+          //  将图片上传至后台
+          avatar.upload({
+            url: 'http://localhost:3080/profile',
+            name: 'avatar',
+            data: {userName: 'hzy0913', info: 'someInfo'},
+            success: function (data) {
+              console.log(data)
+            },
+            error: function (error) {
+              console.log(error)
+            }
+          });
+        })
+      }
+      function reset() {
+        avatar.resetImage();
+      }
+    </script>
+  </body>
 </html>
 ```
 
