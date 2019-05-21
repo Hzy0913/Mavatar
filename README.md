@@ -105,7 +105,7 @@ export default class App extends Component {
 **裁剪**: 图片裁剪方法，回调中可以获取裁剪完成base64
 ```javascript
 avatar.imageClipper(function(dataurl) {
-	console.log(dataurl);
+  console.log(dataurl);
 });
 ```
 **重置**: 重置头像上传方法, 可以清空已上传的图片
@@ -115,11 +115,11 @@ avatar.resetImage()
 
 获取头像上传前的信息(大小，尺寸等)。
 ```javascript
- const flieInfo = avatar.getfileInfo()
+const flieInfo = avatar.getfileInfo()
 ```
 获取头像完成裁剪生成的base64(注意！使用时确保图片已完成裁剪，图片裁剪为异步方法)。
 ```javascript
- const dataUrl = avatar.getDataUrl()
+const dataUrl = avatar.getDataUrl()
 ```
 图片上传至服务器的内置ajax方法(使用`multipart/form-data`类型模拟form格式进行上传)
 ```javascript
