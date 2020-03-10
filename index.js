@@ -8,6 +8,7 @@ var EXIF = require('exif-js');
     this.el = document.querySelector(option.el);
     this.hd = typeof option.hd === 'boolean' ? option.hd : true;
     this.backgroundColor = option.backgroundColor || '';
+    this.scaleBy = option.scaleBy;
     this.dataUrl = null;
     this.file = null;
     this.width = option.width || '200px';
@@ -149,6 +150,9 @@ var EXIF = require('exif-js');
       var width = this.width.replace(/[^0-9]/ig,"");
       var height = this.height.replace(/[^0-9]/ig,"");
       var scaleBy = this.hd ? 2 : 1;
+      if (this.scaleBy) {
+        scaleBy = this.scaleBy;
+      }
       var canvas = document.createElement("canvas");
       // 获取元素相对于视窗的偏移量
       var rect = wrapperDom.getBoundingClientRect();
